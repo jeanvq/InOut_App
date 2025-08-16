@@ -47,10 +47,38 @@ public class InOutApp {
     }
 
     private static void setupBudget() {
-        System.out.print("Enter your monthly income: $");
-        double income = Double.parseDouble(scanner.nextLine());
-        System.out.print("Set your monthly budget limit: $");
-        double limit = Double.parseDouble(scanner.nextLine());
+        double income = 0;
+        double limit = 0;
+        while (true) {
+            System.out.print("Enter your monthly income: $");
+            String input = scanner.nextLine();
+            if (!input.matches("^\\d+(\\.\\d{1,2})?$")) {
+                System.out.println(ConsoleColors.YELLOW + "Please enter a valid positive number for income (no letters, no scientific notation)." + ConsoleColors.RESET);
+                continue;
+            }
+            try {
+                income = Double.parseDouble(input);
+                if (income < 0) throw new NumberFormatException();
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println(ConsoleColors.YELLOW + "Please enter a valid positive number for income." + ConsoleColors.RESET);
+            }
+        }
+        while (true) {
+            System.out.print("Set your monthly budget limit: $");
+            String input = scanner.nextLine();
+            if (!input.matches("^\\d+(\\.\\d{1,2})?$")) {
+                System.out.println(ConsoleColors.YELLOW + "Please enter a valid positive number for budget limit (no letters, no scientific notation)." + ConsoleColors.RESET);
+                continue;
+            }
+            try {
+                limit = Double.parseDouble(input);
+                if (limit < 0) throw new NumberFormatException();
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println(ConsoleColors.YELLOW + "Please enter a valid positive number for budget limit." + ConsoleColors.RESET);
+            }
+        }
         budgetService = new BudgetService(income, limit);
     }
 
@@ -76,18 +104,47 @@ public class InOutApp {
     }
 
     private static void addExpense() {
-        System.out.print("Amount: $");
-        double amount = Double.parseDouble(scanner.nextLine());
+        double amount = 0;
+        while (true) {
+            System.out.print("Amount: $");
+            String input = scanner.nextLine();
+            try {
+                amount = Double.parseDouble(input);
+                if (amount < 0) throw new NumberFormatException();
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println(ConsoleColors.YELLOW + "Please enter a valid positive number for amount." + ConsoleColors.RESET);
+            }
+        }
         System.out.print("Description: ");
         String description = scanner.nextLine();
         System.out.println("Category:");
         for (Category c : Category.values()) {
             System.out.println(c.ordinal() + 1 + ". " + c.emoji + " " + c.name());
         }
-        int catIdx = Integer.parseInt(scanner.nextLine()) - 1;
+        int catIdx = -1;
+        while (true) {
+            String input = scanner.nextLine();
+            try {
+                catIdx = Integer.parseInt(input) - 1;
+                if (catIdx < 0 || catIdx >= Category.values().length) throw new NumberFormatException();
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println(ConsoleColors.YELLOW + "Please enter a valid category number." + ConsoleColors.RESET);
+            }
+        }
         Category category = Category.values()[catIdx];
-        System.out.print("Date (yyyy-MM-dd): ");
-        LocalDate date = DateUtil.parse(scanner.nextLine());
+        LocalDate date = null;
+        while (true) {
+            System.out.print("Date (yyyy-MM-dd): ");
+            String input = scanner.nextLine();
+            try {
+                date = DateUtil.parse(input);
+                break;
+            } catch (Exception e) {
+                System.out.println(ConsoleColors.YELLOW + "Please enter a valid date in yyyy-MM-dd format." + ConsoleColors.RESET);
+            }
+        }
         budgetService.addExpense(amount, description, category, date);
         System.out.println(ConsoleColors.GREEN + "Expense added!" + ConsoleColors.RESET);
     }
@@ -110,35 +167,76 @@ public class InOutApp {
 
     private static void editExpense() {
         viewExpenses();
-        System.out.print("Enter expense number to edit: ");
-        int idx = Integer.parseInt(scanner.nextLine()) - 1;
-        if (idx < 0 || idx >= budgetService.getExpenses().size()) {
-            System.out.println("Invalid expense number.");
-            return;
+        int idx = -1;
+        while (true) {
+            System.out.print("Enter expense number to edit: ");
+            String input = scanner.nextLine();
+            try {
+                idx = Integer.parseInt(input) - 1;
+                if (idx < 0 || idx >= budgetService.getExpenses().size()) throw new NumberFormatException();
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println(ConsoleColors.YELLOW + "Please enter a valid expense number." + ConsoleColors.RESET);
+            }
         }
-        System.out.print("New amount: $");
-        double amount = Double.parseDouble(scanner.nextLine());
+        double amount = 0;
+        while (true) {
+            System.out.print("New amount: $");
+            String input = scanner.nextLine();
+            try {
+                amount = Double.parseDouble(input);
+                if (amount < 0) throw new NumberFormatException();
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println(ConsoleColors.YELLOW + "Please enter a valid positive number for amount." + ConsoleColors.RESET);
+            }
+        }
         System.out.print("New description: ");
         String description = scanner.nextLine();
         System.out.println("New category:");
         for (Category c : Category.values()) {
             System.out.println(c.ordinal() + 1 + ". " + c.emoji + " " + c.name());
         }
-        int catIdx = Integer.parseInt(scanner.nextLine()) - 1;
+        int catIdx = -1;
+        while (true) {
+            String input = scanner.nextLine();
+            try {
+                catIdx = Integer.parseInt(input) - 1;
+                if (catIdx < 0 || catIdx >= Category.values().length) throw new NumberFormatException();
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println(ConsoleColors.YELLOW + "Please enter a valid category number." + ConsoleColors.RESET);
+            }
+        }
         Category category = Category.values()[catIdx];
-        System.out.print("New date (yyyy-MM-dd): ");
-        LocalDate date = DateUtil.parse(scanner.nextLine());
+        LocalDate date = null;
+        while (true) {
+            System.out.print("New date (yyyy-MM-dd): ");
+            String input = scanner.nextLine();
+            try {
+                date = DateUtil.parse(input);
+                break;
+            } catch (Exception e) {
+                System.out.println(ConsoleColors.YELLOW + "Please enter a valid date in yyyy-MM-dd format." + ConsoleColors.RESET);
+            }
+        }
         budgetService.editExpense(idx, amount, description, category, date);
         System.out.println(ConsoleColors.GREEN + "Expense updated!" + ConsoleColors.RESET);
     }
 
     private static void deleteExpense() {
         viewExpenses();
-        System.out.print("Enter expense number to delete: ");
-        int idx = Integer.parseInt(scanner.nextLine()) - 1;
-        if (idx < 0 || idx >= budgetService.getExpenses().size()) {
-            System.out.println("Invalid expense number.");
-            return;
+        int idx = -1;
+        while (true) {
+            System.out.print("Enter expense number to delete: ");
+            String input = scanner.nextLine();
+            try {
+                idx = Integer.parseInt(input) - 1;
+                if (idx < 0 || idx >= budgetService.getExpenses().size()) throw new NumberFormatException();
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println(ConsoleColors.YELLOW + "Please enter a valid expense number." + ConsoleColors.RESET);
+            }
         }
         budgetService.removeExpense(idx);
         System.out.println(ConsoleColors.GREEN + "Expense deleted!" + ConsoleColors.RESET);
