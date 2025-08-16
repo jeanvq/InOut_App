@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Compile Java Project",
+			"type": "shell",
+			"command": "javac -d out src/model/*.java src/service/*.java src/util/*.java src/report/*.java src/cli/InOutApp.java",
+			"args": [],
+			"problemMatcher": [
+				"$javac"
+			]
+		},
+		{
+			"label": "Run InOut App",
+			"type": "shell",
+			"command": "java -cp out cli.InOutApp",
+			"args": [],
+			"problemMatcher": []
+		}
+	]
+}
